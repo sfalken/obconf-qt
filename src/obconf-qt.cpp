@@ -24,7 +24,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QLocale>
-#include <QX11Info>
+#include <QGuiApplication>
 #include <QMessageBox>
 #include "maindialog.h"
 #include <X11/Xlib.h>
@@ -124,7 +124,7 @@ static gboolean get_all(Window win, Atom prop, Atom type, gint size,
   gint ret_size;
   gulong ret_items, bytes_left;
 
-  res = XGetWindowProperty(QX11Info::display(), win, prop, 0l, G_MAXLONG,
+  res = XGetWindowProperty(QNativeInterface::QX11Application::display(), win, prop, 0l, G_MAXLONG,
                            FALSE, type, &ret_type, &ret_size,
                            &ret_items, &bytes_left, &xdata);
 
@@ -163,7 +163,7 @@ static gboolean prop_get_string_utf8(Window win, Atom prop, gchar** ret) {
   gchar* str;
   guint num;
 
-  if(get_all(win, prop, XInternAtom(QX11Info::display(), "UTF8_STRING", 0), 8, (guchar**)&raw, &num)) {
+  if(get_all(win, prop, XInternAtom(QNativeInterface::QX11Application::display(), "UTF8_STRING", 0), 8, (guchar**)&raw, &num)) {
     str = g_strndup(raw, num); /* grab the first string from the list */
     g_free(raw);
 
@@ -204,12 +204,12 @@ int main(int argc, char** argv) {
 
   paths = obt_paths_new();
   parse_i = obt_xml_instance_new();
-  int screen = QX11Info::appScreen();
-  rrinst = RrInstanceNew(QX11Info::display(), screen);
+  int screen = QNativeInterface::QX11Application::appScreen();
+  rrinst = RrInstanceNew(QNativeInterface::QX11Application::display(), screen);
   if(!obc_config_file) {
     gchar* p;
-    if(prop_get_string_utf8(QX11Info::appRootWindow(screen),
-                            XInternAtom(QX11Info::display(), "_OB_CONFIG_FILE", 0), &p)) {
+    if(prop_get_string_utf8(QNativeInterface::QX11Application::appRootWindow(screen),
+                            XInternAtom(QNativeInterface::QX11Application::display(), "_OB_CONFIG_FILE", 0), &p)) {
       obc_config_file = g_filename_from_utf8(p, -1, NULL, NULL, NULL);
       g_free(p);
     }

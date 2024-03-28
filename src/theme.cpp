@@ -157,7 +157,7 @@ void MainDialog::on_install_theme_clicked() {
 void MainDialog::on_theme_archive_clicked() {
     QFileDialog* dialog = new QFileDialog();
     dialog->setFileMode(QFileDialog::Directory);
-    QString filename=QLatin1String("");
+    QString filename=u""_qs;
     if(dialog->exec())
          filename= dialog->selectedFiles()[0];
   if(!filename.isEmpty()) {
